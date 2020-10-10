@@ -4,6 +4,7 @@ import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Sidebar from './Sidebar';
 import CourseArea from './CourseArea';
+import { Alert, Jumbotron, Button } from 'react-bootstrap';
 
 class App extends React.Component {
   constructor(props) {
@@ -12,7 +13,8 @@ class App extends React.Component {
       allCourses: {},
       filteredCourses: {},
       subjects: [],
-      cartCourses: {} // representation of course
+      cartCourses: {}, // representation of course
+      activeKey: "home"
       // format: {course.number: {section.number: [subsections]}}
     };
 
@@ -20,6 +22,9 @@ class App extends React.Component {
     this.isInCart = this.isInCart.bind(this);
     this.addToCart = this.addToCart.bind(this);
     this.removeFromCart = this.removeFromCart.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleCart = this.handleCart.bind(this);
   }
 
 
@@ -161,6 +166,26 @@ class App extends React.Component {
     this.setState({filteredCourses: courses})
   }
 
+  handleSearch() {
+    this.setState({activeKey: "search"});
+  }
+
+  handleCart() {
+    this.setState({activeKey: "cart"});
+  }
+
+  handleSelect(key) {
+    if (key === "home") {
+      this.setState({activeKey: "home"});
+    }
+    else if (key === "search") {
+      this.setState({activeKey: "search"});
+    }
+    else {
+      this.setState({activeKey: "cart"});
+    }
+  }
+
   render() {
 
     // convert cartCourses representation to actual information
@@ -184,7 +209,19 @@ class App extends React.Component {
 
 
 
-        <Tabs defaultActiveKey="search" style={{position: 'fixed', zIndex: 1, width: '100%', backgroundColor: 'white'}}>
+        <Tabs defaultActiveKey="home" activeKey={this.state.activeKey} onSelect={this.handleSelect} style={{position: 'fixed', zIndex: 1, width: '100%', backgroundColor: 'white'}}>
+
+          <Tab eventKey="home" title="Home" style={{paddingTop: '5vh'}}>
+          <div style={{marginLeft: '5vw'}}>
+            <Jumbotron>
+              <h1> Welcome to Badger Course Enrollment! </h1>
+              <h2> Use Search to search for courses <Button onClick={this.handleSearch}>Go to Search</Button></h2> 
+              <h2> Check out your courses added in cart <Button onClick={this.handleCart}> Go to Cart</Button></h2>
+              
+            </Jumbotron>
+          </div>
+          </Tab>
+
           <Tab eventKey="search" title="Search" style={{paddingTop: '5vh'}}>
             <Sidebar setCourses={(courses) => this.setCourses(courses)} courses={this.state.allCourses} subjects={this.state.subjects}/>
             <div style={{marginLeft: '20vw'}}>
@@ -195,6 +232,9 @@ class App extends React.Component {
           <Tab eventKey="cart" title="Cart" style={{paddingTop: '5vh'}}>
             <div style={{marginLeft: '5vw'}}>
               <CourseArea data={full_cart} addToCart={this.addToCart} removeFromCart={this.removeFromCart} isInCart={this.isInCart} cartMode={true}/>
+              {full_cart.length === 0 && 
+              <Alert variant="warning"><h1>Your cart is empty. </h1>
+              <h2>Please Search and add more courses to your cart.<Button onClick={this.handleSearch}> Search </Button></h2></Alert>}
             </div>
           </Tab>
         </Tabs> 

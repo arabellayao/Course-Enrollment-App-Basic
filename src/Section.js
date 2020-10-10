@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from 'react-bootstrap';
 import './App.css'
 import Subsection from './Subsection.js'
+import { Table } from 'react-bootstrap'
 
 class Section extends React.Component {
 
@@ -41,7 +42,7 @@ class Section extends React.Component {
 		var data = this.props.data; // for easy reference
 
 		// default button: add section
-		var button = <Button onClick={() => this.props.addToCart(this.props.course, data, "All")}> Add Section </Button>
+		var button = <Button variant="success" onClick={() => this.props.addToCart(this.props.course, data, "All")}> Add Section </Button>
 		// section is in cart: remove section
 		if (this.props.isInCart(this.props.course.number, data.number)) {
 		button = <Button variant="warning" onClick={() => this.props.removeFromCart(this.props.course.number, data.number)}> Remove Section </Button>
@@ -62,11 +63,20 @@ class Section extends React.Component {
 						{this.getTimes()}
 					</ul>
 				</ul>
-				{subsections.length !== 0 && <h4>Subsection</h4>}
-				{subsections}
-				<br></br>
-				<br></br>
-				<br></br>
+				{subsections.length !== 0 && 
+				<h4>Subsection</h4>}
+				{subsections.length !== 0 &&
+				<Table striped hover>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Location</th>
+						<th>Meeting Times</th>
+						<th>Cart</th>
+					</tr>
+				</thead>
+				<tbody>{subsections}</tbody>
+				</Table>}		
 			</div>
 		)
 	}
